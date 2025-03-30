@@ -1,6 +1,6 @@
-package opensource.DreamingLibrary.example.repository;
+package opensource.DreamingLibrary.example.user.repository;
 
-import opensource.DreamingLibrary.example.entity.User;
+import opensource.DreamingLibrary.example.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
