@@ -1,10 +1,10 @@
-package opensource.DreamingLibrary.example.dto.response;
+package opensource.DreamingLibrary.example.user.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import opensource.DreamingLibrary.example.entity.User;
+import opensource.DreamingLibrary.example.user.entity.User;
 
 @Builder
 public record UserResponse(
