@@ -1,19 +1,20 @@
 package opensource.DreamingLibrary.book.mapper;
+import lombok.RequiredArgsConstructor;
 import opensource.DreamingLibrary.book.dto.request.BookCreateRequest;
 import opensource.DreamingLibrary.book.entity.Book;
+import opensource.DreamingLibrary.group.entity.Group;
 
 public class BookMapper {
 
     // DTO → 엔티티 변환
-    public static Book from(BookCreateRequest request) {
+    public static Book from(BookCreateRequest request, Group group) {
         return Book.builder()
                 // group은 Service에서 주입할 수도 있음
                 .title(request.title())
                 .author(request.author())
                 .description(request.description())
                 .category(request.category())
-                .createdAt(request.createdAt())
-                .updatedAt(request.updatedAt())
+                .group(group)
                 .build();
     }
 
