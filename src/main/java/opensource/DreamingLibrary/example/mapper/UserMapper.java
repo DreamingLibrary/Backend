@@ -1,7 +1,7 @@
-package opensource.DreamingLibrary.example.user.mapper;
+package opensource.DreamingLibrary.example.mapper;
 
-import opensource.DreamingLibrary.example.user.dto.request.UserCreateRequest;
-import opensource.DreamingLibrary.example.user.entity.User;
+import opensource.DreamingLibrary.example.dto.request.UserCreateRequest;
+import opensource.DreamingLibrary.example.entity.User;
 
 public class UserMapper {
     //DTO와 엔티티 사이의 변환을 담당

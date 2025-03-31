@@ -1,4 +1,4 @@
-package opensource.DreamingLibrary.example.user.entity;
+package opensource.DreamingLibrary.example.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

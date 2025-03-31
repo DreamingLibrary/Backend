@@ -1,11 +1,11 @@
-package opensource.DreamingLibrary.example.user.controller;
+package opensource.DreamingLibrary.example.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import opensource.DreamingLibrary.example.user.dto.request.UserCreateRequest;
-import opensource.DreamingLibrary.example.user.service.UserService;
+import opensource.DreamingLibrary.example.dto.request.UserCreateRequest;
+import opensource.DreamingLibrary.example.service.UserService;
 import opensource.DreamingLibrary.global.dto.response.SuccessResponse;
 import opensource.DreamingLibrary.global.dto.response.result.SingleResult;
 import org.springframework.web.bind.annotation.PostMapping;
