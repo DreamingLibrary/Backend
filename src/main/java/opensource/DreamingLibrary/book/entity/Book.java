@@ -2,6 +2,7 @@ package opensource.DreamingLibrary.book.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import opensource.DreamingLibrary.global.entity.TimeStamp;
 import opensource.DreamingLibrary.group.entity.Group;
 
 import java.time.LocalDateTime;
@@ -12,9 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Book {
+public class Book extends TimeStamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,11 +34,28 @@ public class Book {
     private String description;
 
     @Column(name = "category", nullable = false)
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
-    @Column(name = "createdAt", nullable = false)
-    private LocalDateTime createdAt;  // LocalTime → LocalDateTime
+    /*
+    JPA와 빌더를 사용하는 경우 빌더를 클래스 차원에 붙이면NoArgsConstructor와 충돌할 수 있어요
+    빌더는 엔티티 내부에 선언해주세요!
+     */
+    @Builder
+    public Book(
+            Long bookId,
+            Group group,
+            String title,
+            String author,
+            String description,
+            Category category
+    ){
+        this.bookId = bookId;
+        this.group = group;
+        this.title = title;
+        this.author = author;
+        this.description = description;
+        this.category = category;
+    }
 
-    @Column(name = "updatedAt", nullable = false)
-    private LocalDateTime updatedAt;  // LocalTime → LocalDateTime
 }
