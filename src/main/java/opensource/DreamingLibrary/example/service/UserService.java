@@ -1,11 +1,12 @@
-package opensource.DreamingLibrary.example.user.service;
+package opensource.DreamingLibrary.example.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import opensource.DreamingLibrary.example.user.dto.request.UserCreateRequest;
-import opensource.DreamingLibrary.example.user.entity.User;
-import opensource.DreamingLibrary.example.user.mapper.UserMapper;
-import opensource.DreamingLibrary.example.user.repository.UserRepository;
+import opensource.DreamingLibrary.example.dto.request.UserCreateRequest;
+import opensource.DreamingLibrary.example.dto.response.UserResponse;
+import opensource.DreamingLibrary.example.entity.User;
+import opensource.DreamingLibrary.example.mapper.UserMapper;
+import opensource.DreamingLibrary.example.repository.UserRepository;
 import opensource.DreamingLibrary.global.dto.response.result.SingleResult;
 import opensource.DreamingLibrary.global.exception.CustomException;
 import opensource.DreamingLibrary.global.exception.ErrorCode;
