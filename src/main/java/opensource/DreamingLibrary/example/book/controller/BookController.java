@@ -2,7 +2,7 @@ package opensource.DreamingLibrary.example.book.controller;
 
 import lombok.RequiredArgsConstructor;
 import opensource.DreamingLibrary.example.book.dto.request.BookCreateRequest;
-import opensource.DreamingLibrary.example.book.entity.Book;
+import opensource.DreamingLibrary.example.book.dto.response.BookResponse;
 import opensource.DreamingLibrary.example.book.service.BookService;
 import opensource.DreamingLibrary.global.dto.response.SuccessResponse;
 import opensource.DreamingLibrary.global.dto.response.result.SingleResult;
@@ -20,14 +20,12 @@ public class BookController {
      * POST /api/books
      */
     @PostMapping
-    public SuccessResponse<SingleResult<Book>> createBook(@RequestBody BookCreateRequest request) {
-        Book createdBook = bookService.createBook(request);
+    public SuccessResponse<SingleResult<BookResponse>> createBook(@RequestBody BookCreateRequest request) {
+        BookResponse createdBookResponse = bookService.createBook(request);
 
-        // SingleResult에 Book 데이터를 담음
-        SingleResult<Book> singleResult = new SingleResult<>();
-        singleResult.setData(createdBook);
+        SingleResult<BookResponse> singleResult = new SingleResult<>();
+        singleResult.setData(createdBookResponse);
 
-        // SuccessResponse로 감싸 최종 응답
         return SuccessResponse.ok(singleResult);
     }
 
@@ -36,14 +34,12 @@ public class BookController {
      * GET /api/books/{bookId}
      */
     @GetMapping("/{bookId}")
-    public SuccessResponse<SingleResult<Book>> getBook(@PathVariable Long bookId) {
-        Book book = bookService.getBook(bookId);
+    public SuccessResponse<SingleResult<BookResponse>> getBook(@PathVariable Long bookId) {
+        BookResponse bookResponse = bookService.getBook(bookId);
 
-        SingleResult<Book> singleResult = new SingleResult<>();
-        singleResult.setData(book);
+        SingleResult<BookResponse> singleResult = new SingleResult<>();
+        singleResult.setData(bookResponse);
 
         return SuccessResponse.ok(singleResult);
     }
-
-
 }

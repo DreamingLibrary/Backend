@@ -2,6 +2,7 @@ package opensource.DreamingLibrary.example.book.service;
 
 import lombok.RequiredArgsConstructor;
 import opensource.DreamingLibrary.example.book.dto.request.BookCreateRequest;
+import opensource.DreamingLibrary.example.book.dto.response.BookResponse;
 import opensource.DreamingLibrary.example.book.entity.Book;
 import opensource.DreamingLibrary.example.book.mapper.BookMapper;
 import opensource.DreamingLibrary.example.book.repository.BookRepository;
@@ -10,7 +11,6 @@ import opensource.DreamingLibrary.example.group.repository.GroupRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ public class BookService {
      * CREATE
      * - 만약 createdAt / updatedAt이 null이면 현재 시간(LocalDateTime.now())로 대체
      */
-    public Book createBook(BookCreateRequest request) {
+    public BookResponse createBook(BookCreateRequest request) {
         // DTO → 엔티티
         Book book = BookMapper.from(request);
 
@@ -42,15 +42,41 @@ public class BookService {
             book.setGroup(group);
         }
 
-        return bookRepository.save(book);
+        // DB 저장
+        Book savedBook = bookRepository.save(book);
+
+        // **엔티티 → DTO 변환** 후 반환
+        return toResponse(savedBook);
     }
 
     /**
      * READ (단일 조회)
      */
-    public Book getBook(Long bookId) {
-        return bookRepository.findById(bookId)
-                .orElse(null);
+    public BookResponse getBook(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("Book not found. ID=" + bookId));
+
+        // 엔티티 → DTO 변환
+        return toResponse(book);
     }
 
+    /**
+     * 엔티티를 DTO로 변환하는 내부 헬퍼 메서드
+     */
+    private BookResponse toResponse(Book book) {
+        return BookResponse.builder()
+                .bookId(book.getBookId())
+                .title(book.getTitle())
+                .author(book.getAuthor())
+                .description(book.getDescription())
+                .category(book.getCategory())
+                .createdAt(book.getCreatedAt())
+                .updatedAt(book.getUpdatedAt())
+                .groupId(
+                        (book.getGroup() != null)
+                                ? book.getGroup().getGroupId()
+                                : null
+                )
+                .build();
+    }
 }
