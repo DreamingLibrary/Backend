@@ -4,13 +4,20 @@ import lombok.RequiredArgsConstructor;
 import opensource.DreamingLibrary.book.dto.request.BookCreateRequest;
 import opensource.DreamingLibrary.book.dto.response.BookResponse;
 import opensource.DreamingLibrary.book.entity.Book;
+import opensource.DreamingLibrary.book.entity.Category;
 import opensource.DreamingLibrary.book.mapper.BookMapper;
 import opensource.DreamingLibrary.book.repository.BookRepository;
+import opensource.DreamingLibrary.global.dto.response.result.ListResult;
+import opensource.DreamingLibrary.global.dto.response.result.SingleResult;
+import opensource.DreamingLibrary.global.exception.CustomException;
+import opensource.DreamingLibrary.global.exception.ErrorCode;
+import opensource.DreamingLibrary.global.service.ResponseService;
 import opensource.DreamingLibrary.group.entity.Group;
 import opensource.DreamingLibrary.group.repository.GroupRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,63 +27,72 @@ public class BookService {
     private final GroupRepository groupRepository;
 
     /**
-     * CREATE
-     * - 만약 createdAt / updatedAt이 null이면 현재 시간(LocalDateTime.now())로 대체
+     * 책 등록
      */
-    public BookResponse createBook(BookCreateRequest request) {
-        // DTO → 엔티티
-        Book book = BookMapper.from(request);
-
-        // createdAt / updatedAt이 null이면 서버 시간으로 설정
-        if (book.getCreatedAt() == null) {
-            book.setCreatedAt(LocalDateTime.now());
-        }
-        if (book.getUpdatedAt() == null) {
-            book.setUpdatedAt(LocalDateTime.now());
-        }
-
+    public SingleResult<Long> createBook(BookCreateRequest request) {
+        
         // groupId가 있다면 실제 Group 엔티티를 조회 후 주입
+        Group group = null;
         if (request.groupId() != null) {
-            Group group = groupRepository.findById(request.groupId())
-                    .orElseThrow(() -> new IllegalArgumentException("Group not found. ID=" + request.groupId()));
-            book.setGroup(group);
+            group = groupRepository.findById(request.groupId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_EXIST));
         }
+        
+        //DB 저장
+        Book newBook = BookMapper.from(request, group);
+        newBook = bookRepository.save(newBook);
 
-        // DB 저장
-        Book savedBook = bookRepository.save(book);
-
-        // **엔티티 → DTO 변환** 후 반환
-        return toResponse(savedBook);
+       return ResponseService.getSingleResult(newBook.getBookId());
     }
 
     /**
-     * READ (단일 조회)
+     * 단일 조회
      */
-    public BookResponse getBook(Long bookId) {
+    public SingleResult<BookResponse> getBookById(Long bookId) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new IllegalArgumentException("Book not found. ID=" + bookId));
+                .orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_EXIST));
 
-        // 엔티티 → DTO 변환
-        return toResponse(book);
+        return ResponseService.getSingleResult(BookResponse.of(book));
     }
 
     /**
-     * 엔티티를 DTO로 변환하는 내부 헬퍼 메서드
+     * 책 전체 조회
+     * - 아직 대여 상태 조회 불가능
      */
-    private BookResponse toResponse(Book book) {
-        return BookResponse.builder()
-                .bookId(book.getBookId())
-                .title(book.getTitle())
-                .author(book.getAuthor())
-                .description(book.getDescription())
-                .category(book.getCategory())
-                .createdAt(book.getCreatedAt())
-                .updatedAt(book.getUpdatedAt())
-                .groupId(
-                        (book.getGroup() != null)
-                                ? book.getGroup().getGroupId()
-                                : null
-                )
-                .build();
+    public ListResult<BookResponse> getAllBooks(){
+        List<Book> books = bookRepository.findAll();
+        List<BookResponse> responseList = books.stream()
+                .map(BookResponse::of)
+                .toList();
+
+        return ResponseService.getListResult(responseList);
+    }
+
+
+    /**
+     * 카테고리별 조회
+     */
+    public ListResult<BookResponse> getBooksByCategory(Category category){
+        List<Book> books = bookRepository.findByCategory(category);
+        List<BookResponse> responseList = books.stream()
+                .map(BookResponse::of)
+                .toList();
+
+        return ResponseService.getListResult(responseList);
+    }
+
+
+    /**
+     * 제목 또는 저자명으로 검색
+     */
+    public ListResult<BookResponse> searchBooksByKeyword(String keyword){
+        List<Book> books = bookRepository
+                .findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(keyword, keyword);
+
+        List<BookResponse> responseList = books.stream()
+                .map(BookResponse::of)
+                .toList();
+
+        return ResponseService.getListResult(responseList);
     }
 }

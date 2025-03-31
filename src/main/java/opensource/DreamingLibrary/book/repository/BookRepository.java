@@ -11,4 +11,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     
     //카테고리별 조회
     List<Book> findByCategory(Category category);
+
+    //제목 또는 저자명으로 조회
+    List<Book> findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(String titleKeyword, String authorKeyword);
 }
