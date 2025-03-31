@@ -1,12 +1,19 @@
 package opensource.DreamingLibrary.rent.service;
 
 import lombok.RequiredArgsConstructor;
+import opensource.DreamingLibrary.book.dto.response.BookResponse;
 import opensource.DreamingLibrary.book.entity.Book;
 import opensource.DreamingLibrary.book.repository.BookRepository;
+import opensource.DreamingLibrary.global.dto.response.result.ListResult;
+import opensource.DreamingLibrary.global.dto.response.result.SingleResult;
+import opensource.DreamingLibrary.global.exception.CustomException;
+import opensource.DreamingLibrary.global.exception.ErrorCode;
+import opensource.DreamingLibrary.global.service.ResponseService;
 import opensource.DreamingLibrary.group.entity.Group;
 import opensource.DreamingLibrary.group.repository.GroupRepository;
 import opensource.DreamingLibrary.rent.dto.request.RentCreateRequest;
 import opensource.DreamingLibrary.rent.dto.response.RentResponse;
+import opensource.DreamingLibrary.rent.dto.response.RentSummaryResponse;
 import opensource.DreamingLibrary.rent.entity.Rent;
 import opensource.DreamingLibrary.rent.mapper.RentMapper;
 import opensource.DreamingLibrary.rent.repository.RentRepository;
@@ -14,7 +21,8 @@ import opensource.DreamingLibrary.user.entity.User;
 import opensource.DreamingLibrary.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,45 +34,47 @@ public class RentService {
     private final BookRepository bookRepository;
 
     // CREATE
-    public RentResponse createRent(RentCreateRequest requestDto) {
+    public SingleResult<Long> createRent(RentCreateRequest requestDto) {
 
-        // 1) user, group, book 조회 (필수값)
         User user = userRepository.findById(requestDto.userId())
-                .orElseThrow(() -> new RuntimeException("User not found with id=" + requestDto.userId()));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
         Group group = groupRepository.findById(requestDto.groupId())
-                .orElseThrow(() -> new RuntimeException("Group not found with id=" + requestDto.groupId()));
+                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_EXIST));
         Book book = bookRepository.findById(requestDto.bookId())
-                .orElseThrow(() -> new RuntimeException("Book not found with id=" + requestDto.bookId()));
+                .orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_EXIST));
 
-        // 2) 매퍼 사용 또는 직접 빌드
         Rent rent = RentMapper.from(requestDto, user, group, book);
 
         Rent saved = rentRepository.save(rent);
 
-        // 3) 응답 변환
-        return toResponse(saved);
+        saved.setReturnAt(saved.getCreatedAt().plusDays(saved.getRentalPeriod()));
+
+        Rent finalSaved = rentRepository.save(saved);
+
+        return ResponseService.getSingleResult(finalSaved.getRentId());
     }
 
-    // READ
-    public RentResponse getRent(Long rentId) {
-        Optional<Rent> optionalRent = rentRepository.findById(rentId);
-        return optionalRent
-                .map(this::toResponse)
-                .orElse(null); // 실제로는 예외 처리 or 적절한 에러 반환
+    /*
+    단일 상세 읽기
+     */
+    public SingleResult<RentResponse> getRentById(Long rentId) {
+        Rent rent = rentRepository.findById(rentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RENT_NOT_EXIST));
+        return ResponseService.getSingleResult(RentResponse.of(rent));
     }
 
-    // 엔티티 -> 응답 DTO 변환
-    private RentResponse toResponse(Rent rent) {
-        return RentResponse.builder()
-                .rentId(rent.getRentId())
-                .userId(rent.getUser().getId())
-                .groupId(rent.getGroup().getGroupId())
-                .bookId(rent.getBook().getBookId())
-                .rentalPeriod(rent.getRentalPeriod())
-                .returnAt(rent.getReturnAt())
-                .rentalCount(rent.getRentalCount())
-                .createdAt(rent.getCreatedAt())
-                .updatedAt(rent.getUpdatedAt())
-                .build();
+
+    /*
+    * 특정 그룹의 모든 대여 읽기
+     */
+    public ListResult<RentSummaryResponse> getAllRentsByUserAndGroup(Long userId, Long groupId) {
+        List<Rent> rents = rentRepository.findAllByUser_IdAndGroup_GroupId(userId, groupId);
+
+        List<RentSummaryResponse> rentResponseList = rents.stream()
+                .map(RentSummaryResponse::of)
+                .toList();
+
+        return ResponseService.getListResult(rentResponseList);
     }
+
 }
