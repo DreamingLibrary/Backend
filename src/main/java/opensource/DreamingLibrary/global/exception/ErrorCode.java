@@ -30,7 +30,10 @@ public enum ErrorCode {
     GROUP_NOT_EXIST(-400, "ID에 해당하는 그룹이 존재하지 않습니다.", 406),
 
     //Book
-    BOOK_NOT_EXIST(-500, "ID에 해당하는 책이 존재하지 않습니다", 406);
+    BOOK_NOT_EXIST(-500, "ID에 해당하는 책이 존재하지 않습니다", 406),
+
+    //Rent
+    RENT_NOT_EXIST(-600, "ID에 해당하는 대여가 존재하지 않습니다", 406);
 
     private final int errorCode;
     private final String message;

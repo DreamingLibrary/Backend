@@ -3,6 +3,7 @@ package opensource.DreamingLibrary.rent.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import opensource.DreamingLibrary.book.entity.Book;
+import opensource.DreamingLibrary.global.entity.TimeStamp;
 import opensource.DreamingLibrary.group.entity.Group;
 import opensource.DreamingLibrary.user.entity.User;
 
@@ -11,18 +12,14 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "rent")
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Rent {
+public class Rent extends TimeStamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "rentId")
     private Long rentId; // PK
 
-    // ERD에 따라 userId, groupId, bookId는 각각 User, Group, Book 엔티티와 ManyToOne 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
@@ -35,9 +32,9 @@ public class Rent {
     @JoinColumn(name = "bookId", nullable = false)
     private Book book;
 
-    // 대여 기간(시작 시점 or 기간?)이 DATETIME이라고 하셨으므로 LocalDateTime으로 매핑
+    // 대여 기간(기간)
     @Column(name = "rentalPeriod", nullable = false)
-    private LocalDateTime rentalPeriod;
+    private Integer rentalPeriod;
 
     // 반납 시각
     @Column(name = "returnAt")
@@ -47,10 +44,26 @@ public class Rent {
     @Column(name = "rentalCount")
     private Integer rentalCount;
 
-    // 생성/수정 시각
-    @Column(name = "createdAt", nullable = false)
-    private LocalDateTime createdAt;
+    public void calculateReturnAt() {
+        this.returnAt = getCreatedAt().plusDays(rentalPeriod);
+    }
 
-    @Column(name = "updatedAt", nullable = false)
-    private LocalDateTime updatedAt;
+    @Builder
+    public Rent(
+            Long rentId,
+            User user,
+            Group group,
+            Book book,
+            Integer rentalPeriod,
+            LocalDateTime returnAt,
+            Integer rentalCount
+    ) {
+        this.rentId = rentId;
+        this.user = user;
+        this.group = group;
+        this.book = book;
+        this.rentalPeriod = rentalPeriod;
+        this.returnAt = returnAt;
+        this.rentalCount = rentalCount;
+    }
 }
