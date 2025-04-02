@@ -12,10 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "rent")
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Rent extends TimeStamp {
 
     @Id
@@ -46,4 +43,27 @@ public class Rent extends TimeStamp {
     // 연장 횟수
     @Column(name = "rentalCount")
     private Integer rentalCount;
+
+    public void calculateReturnAt() {
+        this.returnAt = getCreatedAt().plusDays(rentalPeriod);
+    }
+
+    @Builder
+    public Rent(
+            Long rentId,
+            User user,
+            Group group,
+            Book book,
+            Integer rentalPeriod,
+            LocalDateTime returnAt,
+            Integer rentalCount
+    ) {
+        this.rentId = rentId;
+        this.user = user;
+        this.group = group;
+        this.book = book;
+        this.rentalPeriod = rentalPeriod;
+        this.returnAt = returnAt;
+        this.rentalCount = rentalCount;
+    }
 }

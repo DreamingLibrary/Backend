@@ -47,7 +47,7 @@ public class RentService {
 
         Rent saved = rentRepository.save(rent);
 
-        saved.setReturnAt(saved.getCreatedAt().plusDays(saved.getRentalPeriod()));
+        saved.calculateReturnAt();
 
         Rent finalSaved = rentRepository.save(saved);
 
