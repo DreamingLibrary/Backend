@@ -26,6 +26,7 @@ public record BookCreateRequest(
         @Schema(description = "도서 카테고리", example = "WEB_DEVELOPMENT")
         Category category,
 
+        @NotBlank
         @Schema(example = "1", description = "연결될 Group ID")
         Long groupId
 ) {
