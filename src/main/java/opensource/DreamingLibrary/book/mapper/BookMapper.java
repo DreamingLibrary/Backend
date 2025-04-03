@@ -1,5 +1,4 @@
 package opensource.DreamingLibrary.book.mapper;
-import lombok.RequiredArgsConstructor;
 import opensource.DreamingLibrary.book.dto.request.BookCreateRequest;
 import opensource.DreamingLibrary.book.entity.Book;
 import opensource.DreamingLibrary.group.entity.Group;

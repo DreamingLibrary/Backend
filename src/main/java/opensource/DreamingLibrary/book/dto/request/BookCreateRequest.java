@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import opensource.DreamingLibrary.book.entity.Category;
 
-import java.time.LocalDateTime;
-
 @Builder
 public record BookCreateRequest(
 

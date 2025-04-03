@@ -5,9 +5,6 @@ import lombok.*;
 import opensource.DreamingLibrary.global.entity.TimeStamp;
 import opensource.DreamingLibrary.group.entity.Group;
 
-import java.time.LocalDateTime;
-
-
 @Entity
 @Table(name = "book")
 @Getter
