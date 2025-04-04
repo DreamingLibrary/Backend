@@ -48,6 +48,11 @@ public class Rent extends TimeStamp {
         this.returnAt = getCreatedAt().plusDays(rentalPeriod);
     }
 
+    public boolean isOverdue() {
+        return LocalDateTime.now().isAfter(this.returnAt);
+    }
+
+
     @Builder
     public Rent(
             Long rentId,
