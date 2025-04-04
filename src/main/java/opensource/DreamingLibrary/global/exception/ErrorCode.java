@@ -24,7 +24,16 @@ public enum ErrorCode {
     // User
     USER_ALREADY_EXIST(-300, "이미 회원가입된 유저입니다.", 400),
     USER_NOT_EXIST(-301, "존재하지 않는 유저입니다.", 406),
-    USER_WRONG_PASSWORD(-302, "비밀번호가 틀렸습니다.", 401);
+    USER_WRONG_PASSWORD(-302, "비밀번호가 틀렸습니다.", 401),
+
+    //Group
+    GROUP_NOT_EXIST(-400, "ID에 해당하는 그룹이 존재하지 않습니다.", 406),
+
+    //Book
+    BOOK_NOT_EXIST(-500, "ID에 해당하는 책이 존재하지 않습니다", 406),
+
+    //Rent
+    RENT_NOT_EXIST(-600, "ID에 해당하는 대여가 존재하지 않습니다", 406);
 
     private final int errorCode;
     private final String message;
