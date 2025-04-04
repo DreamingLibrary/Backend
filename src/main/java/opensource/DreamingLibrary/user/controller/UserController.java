@@ -1,15 +1,8 @@
 package opensource.DreamingLibrary.user.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import opensource.DreamingLibrary.global.dto.response.SuccessResponse;
-import opensource.DreamingLibrary.global.dto.response.result.SingleResult;
-import opensource.DreamingLibrary.user.dto.request.UserCreateRequest;
 import opensource.DreamingLibrary.user.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,12 +13,5 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    //회원가입
-    @PostMapping("/register")
-    @Operation(summary = "회원가입")
-    public SuccessResponse<SingleResult<Long>> register(@Valid @RequestBody UserCreateRequest request){
-        SingleResult<Long> result = userService.register(request);
-        return SuccessResponse.ok(result);
-    }
 
 }
