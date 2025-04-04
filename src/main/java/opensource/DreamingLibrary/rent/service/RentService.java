@@ -33,7 +33,9 @@ public class RentService {
     private final GroupRepository groupRepository;
     private final BookRepository bookRepository;
 
-    // CREATE
+    /*
+    * 대여하기
+     */
     public SingleResult<Long> createRent(RentCreateRequest requestDto) {
 
         User user = userRepository.findById(requestDto.userId())
@@ -65,10 +67,10 @@ public class RentService {
 
 
     /*
-    * 특정 그룹의 모든 대여 읽기
+    * 특정 유저의 모든 대여 읽기
      */
-    public ListResult<RentSummaryResponse> getAllRentsByUserAndGroup(Long userId, Long groupId) {
-        List<Rent> rents = rentRepository.findAllByUser_IdAndGroup_GroupId(userId, groupId);
+    public ListResult<RentSummaryResponse> getAllRentsByUser(Long userId) {
+        List<Rent> rents = rentRepository.findAllByUser_Id(userId);
 
         List<RentSummaryResponse> rentResponseList = rents.stream()
                 .map(RentSummaryResponse::of)
@@ -76,5 +78,8 @@ public class RentService {
 
         return ResponseService.getListResult(rentResponseList);
     }
+
+
+
 
 }

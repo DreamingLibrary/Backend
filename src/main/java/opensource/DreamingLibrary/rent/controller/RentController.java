@@ -47,12 +47,11 @@ public class RentController {
      */
 
     @GetMapping("/search")
-    @Operation(summary = "유저 + 그룹 기반 대여 목록 조회")
+    @Operation(summary = "유저 대여 총 조회")
     public SuccessResponse<ListResult<RentSummaryResponse>> getAllRentsByUserAndGroup(
-            @RequestParam("userId") Long userId,
-            @RequestParam("groupId") Long groupId
+            @RequestParam("userId") Long userId
     ) {
-        ListResult<RentSummaryResponse> result = rentService.getAllRentsByUserAndGroup(userId, groupId);
+        ListResult<RentSummaryResponse> result = rentService.getAllRentsByUser(userId);
 
         return SuccessResponse.ok(result);
     }

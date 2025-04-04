@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface RentRepository extends JpaRepository<Rent, Long> {
 
-    List<Rent> findAllByUser_IdAndGroup_GroupId(Long userId, Long groupId);
+    List<Rent> findAllByUser_Id(Long userId);
 }
