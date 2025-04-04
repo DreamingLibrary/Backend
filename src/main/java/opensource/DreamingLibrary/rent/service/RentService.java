@@ -77,4 +77,16 @@ public class RentService {
         return ResponseService.getListResult(rentResponseList);
     }
 
+
+    /**
+     * 책 반납
+     */
+    public SingleResult<String> returnRent(Long rentId){
+        Rent rent = rentRepository.findById(rentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RENT_NOT_EXIST));
+
+        rentRepository.delete(rent);
+        return ResponseService.getSingleResult("반납 완료");
+    }
+
 }
