@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import opensource.DreamingLibrary.user.dto.request.UserCreateRequest;
 import opensource.DreamingLibrary.user.service.UserService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public class AuthController {
     //회원가입
     @PostMapping("/join")
     @Operation(summary = "회원가입")
-    public ResponseEntity<?> register(@Valid @RequestBody UserCreateRequest request){
+    public ResponseEntity<?> register(@Valid @RequestBody UserCreateRequest request) throws BadRequestException {
         userService.register(request);
         return ResponseEntity.ok("회원가입성공");
     }

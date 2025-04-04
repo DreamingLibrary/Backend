@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import opensource.DreamingLibrary.user.dto.response.UserResponse;
+import opensource.DreamingLibrary.user.entity.User;
+import opensource.DreamingLibrary.user.repository.UserRepository;
 import opensource.DreamingLibrary.user.service.CustomUserDetails;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -18,16 +22,13 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+@RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private static final String CONTENT_TYPE = "application/json";
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
-
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-    }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -68,9 +69,20 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 
         String token = jwtUtil.createJwt("access", role, username, 60*60*10L);
-
         response.addHeader("Authorization", "Bearer " + token);
+
+        User user = userRepository.findByStudentNumber(username);
+        try {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            // Jackson ObjectMapper를 사용하여 DTO를 JSON으로 변환
+            new ObjectMapper().writeValue(response.getWriter(), UserResponse.from(user));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
