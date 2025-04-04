@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import opensource.DreamingLibrary.book.dto.response.BookResponse;
 import opensource.DreamingLibrary.global.dto.response.SuccessResponse;
 import opensource.DreamingLibrary.global.dto.response.result.ListResult;
 import opensource.DreamingLibrary.global.dto.response.result.SingleResult;
@@ -53,6 +52,15 @@ public class RentController {
     ) {
         ListResult<RentSummaryResponse> result = rentService.getAllRentsByUser(userId);
 
+        return SuccessResponse.ok(result);
+    }
+
+    /*
+     */
+    @PostMapping("/{rentId}/extend")
+    @Operation(summary = "대여 연장")
+    public SuccessResponse<SingleResult<Long>> extendRent(@PathVariable("rentId") Long rentId) {
+        SingleResult<Long> result = rentService.extendRent(rentId);
         return SuccessResponse.ok(result);
     }
 

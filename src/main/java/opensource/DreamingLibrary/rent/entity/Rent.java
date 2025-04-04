@@ -52,6 +52,19 @@ public class Rent extends TimeStamp {
         return LocalDateTime.now().isAfter(this.returnAt);
     }
 
+    private void setRentalPeriod(int extend_days){
+        this.rentalPeriod+=extend_days;
+    }
+
+
+    public void extend(int days) {
+        // 기존 rentalPeriod에 +days
+        setRentalPeriod(days);
+
+        // returnAt 재계산
+        calculateReturnAt();
+    }
+
 
     @Builder
     public Rent(

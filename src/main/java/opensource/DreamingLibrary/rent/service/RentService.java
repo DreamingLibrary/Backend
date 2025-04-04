@@ -80,6 +80,21 @@ public class RentService {
     }
 
 
+    /*
+    *
+     */
+
+    public SingleResult<Long> extendRent(Long rentId) {
+        Rent rent = rentRepository.findById(rentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RENT_NOT_EXIST));
+
+        //추후 숫자 변수로 변경 예정
+        rent.extend(7);
+
+        rentRepository.save(rent);
+        return ResponseService.getSingleResult(rent.getRentId());
+    }
+
 
 
 }
