@@ -57,10 +57,10 @@ public class BookService {
 
     /**
      * 책 전체 조회
-     * - 아직 대여 상태 조회 불가능
+     * - 대여 가능한 책 목록만 반환
      */
     public ListResult<BookResponse> getAllBooks(){
-        List<Book> books = bookRepository.findAll();
+        List<Book> books = bookRepository.findAllAvailableBooks();
         List<BookResponse> responseList = books.stream()
                 .map(BookResponse::of)
                 .toList();
