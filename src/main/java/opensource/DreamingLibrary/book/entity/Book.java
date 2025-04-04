@@ -5,9 +5,6 @@ import lombok.*;
 import opensource.DreamingLibrary.global.entity.TimeStamp;
 import opensource.DreamingLibrary.group.entity.Group;
 
-import java.time.LocalDateTime;
-
-
 @Entity
 @Table(name = "book")
 @Getter
@@ -20,8 +17,8 @@ public class Book extends TimeStamp {
     @Column(name = "bookId")
     private Long bookId;
 
-    @OneToOne
-    @JoinColumn(name = "groupId")  // 1:1 관계
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "groupId", nullable = false)
     private Group group;
 
     @Column(name = "title", nullable = false)

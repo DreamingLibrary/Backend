@@ -16,7 +16,6 @@ import opensource.DreamingLibrary.group.entity.Group;
 import opensource.DreamingLibrary.group.repository.GroupRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -30,15 +29,8 @@ public class BookService {
      * 책 등록
      */
     public SingleResult<Long> createBook(BookCreateRequest request) {
-        
-        // groupId가 있다면 실제 Group 엔티티를 조회 후 주입
-        Group group = null;
-        if (request.groupId() != null) {
-            group = groupRepository.findById(request.groupId())
-                    .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_EXIST));
-        }
-        
-        //DB 저장
+        Group group = groupRepository.findById(request.groupId())
+                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_EXIST));
         Book newBook = BookMapper.from(request, group);
         newBook = bookRepository.save(newBook);
 
