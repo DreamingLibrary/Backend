@@ -5,10 +5,15 @@ spring:
     import: optional:application-secret.properties
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     defer-datasource-initialization: false
     properties:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
     show-sql: true
+
+sentry:
+  enabled: false
+  dsn: ""
+  environment: local
