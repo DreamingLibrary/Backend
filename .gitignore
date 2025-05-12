@@ -39,3 +39,6 @@ out/
 
 sentry-opentelemetry-agent-*.jar
 .env
+
+### Info ###
+/src/main/resources/

@@ -1,9 +1,0 @@
-spring:
-  config:
-    activate:
-      on-profile: db
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://dreaminglibrary1.cvuima2ui0fy.ap-northeast-2.rds.amazonaws.com:3306/DreamingLibrary
-    username: admin
-    password: dhvmsthtm1!
