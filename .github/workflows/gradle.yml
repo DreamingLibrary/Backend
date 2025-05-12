@@ -73,7 +73,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          docker rmi dreaming_library || true
+          docker rmi ${{ secrets.DOCKER_USERNAME }}/dreaming_library || true
           docker pull ${{ secrets.DOCKER_USERNAME }}/dreaming_library
           docker stop dreaming_library || true
           docker rm dreaming_library || true
