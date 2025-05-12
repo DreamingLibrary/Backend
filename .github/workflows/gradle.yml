@@ -73,6 +73,11 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
+          docker rmi dreaming_library || true
+          docker pull ${{ secrets.DOCKER_USERNAME }}/dreaming_library
+          docker stop dreaming_library || true
+          docker rm dreaming_library || true
+          docker run -d --name dreaming_library -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/dreaming_library
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
