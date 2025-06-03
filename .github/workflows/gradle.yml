@@ -53,7 +53,7 @@ jobs:
 
     # CD
     - name: docker image build
-      run: docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/dreaming_library .
+      run: docker build --platform linux/arm64 -t ${{ secrets.DOCKER_USERNAME }}/dreaming_library .
       
       # DockerHub 로그인
     - name: docker login
