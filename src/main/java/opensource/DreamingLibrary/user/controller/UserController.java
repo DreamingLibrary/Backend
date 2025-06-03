@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import opensource.DreamingLibrary.user.dto.request.InfoRequest;
 import opensource.DreamingLibrary.user.dto.request.PasswordRequest;
-import opensource.DreamingLibrary.user.dto.request.UserCreateRequest;
+import opensource.DreamingLibrary.user.dto.response.UserResponse;
 import opensource.DreamingLibrary.user.service.CustomUserDetails;
 import opensource.DreamingLibrary.user.service.UserService;
 import org.apache.coyote.BadRequestException;
@@ -30,6 +30,11 @@ public class UserController {
     public ResponseEntity<?> editPwd(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody PasswordRequest request) throws BadRequestException {
         userService.updatePwd(customUserDetails.getUsername(), request);
         return ResponseEntity.ok("비밀번호 변경 완료");
+    }
+    @GetMapping("")
+    @Operation(summary = "회원 비밀번호")
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return ResponseEntity.ok(userService.getUserInfo(customUserDetails.getUsername()));
     }
 
 }

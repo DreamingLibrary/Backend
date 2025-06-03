@@ -59,4 +59,9 @@ public class UserService {
         userRepository.save(entity);
     }
 
+    public UserResponse getUserInfo(String studentNumber){
+        User entity = userRepository.findByStudentNumber(studentNumber);
+        return UserResponse.from(entity);
+    }
+
 }
