@@ -16,6 +16,8 @@ import opensource.DreamingLibrary.user.service.CustomUserDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/rents")
 @RequiredArgsConstructor
@@ -29,12 +31,11 @@ public class RentController {
      */
     @PostMapping
     @Operation(summary = "대여하기")
-    public SuccessResponse<SingleResult<Long>> createRent(
+    public Long createRent(
             @Valid @RequestBody RentCreateRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        SingleResult<Long> result = rentService.createRent(request, userDetails.getId());
-        return SuccessResponse.ok(result);
+        return rentService.createRent(request, userDetails.getId());
     }
 
     /**
@@ -42,9 +43,8 @@ public class RentController {
      */
     @GetMapping("/{rentId}")
     @Operation(summary = "대여 단건 조회")
-    public SuccessResponse<SingleResult<RentResponse>> getRentById(@PathVariable("rentId") Long rentId) {
-        SingleResult<RentResponse> result = rentService.getRentById(rentId);
-        return SuccessResponse.ok(result);
+    public RentResponse getRentById(@PathVariable("rentId") Long rentId) {
+        return rentService.getRentById(rentId);
     }
 
     /**
@@ -52,18 +52,15 @@ public class RentController {
      */
     @GetMapping("/my")
     @Operation(summary = "현재 로그인한 사용자의 모든 대출 정보 조회")
-    public SuccessResponse<ListResult<RentSummaryResponse>> getMyRents(
+    public List<RentSummaryResponse> getMyRents(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        ListResult<RentSummaryResponse> result = rentService.getMyRents(userDetails.getId());
-        return SuccessResponse.ok(result);
+        return rentService.getMyRents(userDetails.getId());
     }
 
     /**
      * 책 반납 (해당 rent record를 삭제)
      */
-    @DeleteMapping("/{rentId}")
-    @Operation(summary = "책 반납")
     public SuccessResponse<SingleResult<String>> returnRent(@PathVariable("rentId") Long rentId){
         SingleResult<String> result = rentService.returnRent(rentId);
         return SuccessResponse.ok(result);

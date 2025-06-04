@@ -31,7 +31,7 @@ public class RentService {
     private final BookRepository bookRepository;
 
     // CREATE
-    public SingleResult<Long> createRent(RentCreateRequest requestDto, Long userId) {
+    public Long createRent(RentCreateRequest requestDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
         Book book = bookRepository.findById(requestDto.bookId())
@@ -45,22 +45,22 @@ public class RentService {
 
         Rent finalSaved = rentRepository.save(saved);
 
-        return ResponseService.getSingleResult(finalSaved.getRentId());
+        return finalSaved.getRentId();
     }
 
     /*
     단일 상세 읽기
      */
-    public SingleResult<RentResponse> getRentById(Long rentId) {
+    public RentResponse getRentById(Long rentId) {
         Rent rent = rentRepository.findById(rentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RENT_NOT_EXIST));
-        return ResponseService.getSingleResult(RentResponse.of(rent));
+        return RentResponse.of(rent);
     }
 
     /**
      * 현재 로그인한 사용자의 모든 대출 정보 조회
      */
-    public ListResult<RentSummaryResponse> getMyRents(Long userId) {
+    public List<RentSummaryResponse> getMyRents(Long userId) {
         // 사용자 존재 여부만 확인
         if (!userRepository.existsById(userId)) {
             throw new CustomException(ErrorCode.USER_NOT_EXIST);
@@ -72,7 +72,7 @@ public class RentService {
                 .map(RentSummaryResponse::of)
                 .toList();
 
-        return ResponseService.getListResult(rentResponseList);
+        return rentResponseList;
     }
 
     /**
