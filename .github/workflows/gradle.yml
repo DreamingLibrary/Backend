@@ -68,7 +68,7 @@ jobs:
     - name: Deploy
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.SSH_HOST }}
+        host: ${{ secrets.BETA_SSH_HOST }}
         username: ubuntu
         key: ${{ secrets.SSH_KEY }}
         port: 22
