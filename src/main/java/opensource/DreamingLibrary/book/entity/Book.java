@@ -20,7 +20,7 @@ public class Book extends TimeStamp {
     @Column(name = "bookId")
     private Long bookId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "groupId")  // 1:1 관계
     private Group group;
 
