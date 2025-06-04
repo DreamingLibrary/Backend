@@ -18,4 +18,7 @@ public record GroupCreateRequest(
         @Schema(description = "수정 시각", example = "2025-03-30T10:30:00")
         LocalDateTime updatedTime
 ) {
+    public String getName() {
+        return groupName;
+    }
 }

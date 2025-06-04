@@ -1,5 +1,6 @@
 package opensource.DreamingLibrary.group.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import opensource.DreamingLibrary.global.dto.response.SuccessResponse;
 import opensource.DreamingLibrary.global.dto.response.result.SingleResult;
@@ -35,5 +36,26 @@ public class GroupController {
         return SuccessResponse.ok(singleResult);
     }
 
-    // 추후 update, delete, list 조회 등 추가 가능
+    @PutMapping("/{groupId}")
+    public SuccessResponse<SingleResult<GroupResponse>> updateGroup(@PathVariable Long groupId, @RequestBody GroupCreateRequest request) {
+        GroupResponse groupResponse = groupService.updateGroup(groupId, request);
+
+        SingleResult<GroupResponse> singleResult = new SingleResult<>();
+        singleResult.setData(groupResponse);
+
+        return SuccessResponse.ok(singleResult);
+    }
+
+    @DeleteMapping("/{groupId}")
+    public SuccessResponse<Void> deleteGroup(@PathVariable Long groupId) {
+        groupService.deleteGroup(groupId);
+        return SuccessResponse.ok(null);
+    }
+
+    @GetMapping
+    public SuccessResponse<List<GroupResponse>> listGroups() {
+        List<GroupResponse> groupResponses = groupService.listGroupsWithStatus();
+        return SuccessResponse.ok(groupResponses);
+    }
+
 }
