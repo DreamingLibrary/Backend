@@ -57,5 +57,4 @@ public class Book extends TimeStamp {
         this.description = description;
         this.category = category;
     }
-
 }
