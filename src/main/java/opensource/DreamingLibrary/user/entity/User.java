@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import opensource.DreamingLibrary.group.entity.GroupUser;
+
+import java.util.Set;
 
 @Data
 @Entity
@@ -36,5 +39,8 @@ public class User {
     private Role role;
 
     private String email;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<GroupUser> groupUsers;
 
 }
