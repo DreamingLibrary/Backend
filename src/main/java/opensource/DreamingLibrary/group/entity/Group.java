@@ -28,12 +28,6 @@ public class Group extends TimeStamp {
     @Column(name = "name", nullable = false, unique = true)
     private String groupName;
 
-    @Column(name = "createdAt", nullable = false)
-    private LocalDateTime createdTime;  // 날짜+시간으로 변경
-
-    @Column(name = "updatedAt", nullable = false)
-    private LocalDateTime updatedTime;  // 날짜+시간으로 변경
-
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GroupUser> groupUsers;
 
