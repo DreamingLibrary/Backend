@@ -10,18 +10,10 @@ import opensource.DreamingLibrary.group.entity.GroupJoinRequest.RequestStatus;
 
 import java.time.LocalDateTime;
 
-/*
-1.
-
-
- */
-
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class GroupResponse {
 
     private Long groupId;

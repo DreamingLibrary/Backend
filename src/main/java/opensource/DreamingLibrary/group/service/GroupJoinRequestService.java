@@ -40,7 +40,7 @@ public class GroupJoinRequestService {
 
     @Transactional(readOnly = true)
     public boolean isJoinRequestPending(Long groupId, Long userId) {
-        return groupJoinRequestRepository.existsByGroupIdAndUserIdAndStatus(groupId, userId, RequestStatus.PENDING);
+        return groupJoinRequestRepository.existsByGroupGroupIdAndUserIdAndStatus(groupId, userId, RequestStatus.PENDING);
     }
 
     @Transactional

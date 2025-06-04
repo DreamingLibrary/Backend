@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import opensource.DreamingLibrary.group.entity.Group;
 import opensource.DreamingLibrary.group.entity.GroupJoinRequest;
 import opensource.DreamingLibrary.group.entity.GroupUser;
+import opensource.DreamingLibrary.group.repository.GroupJoinRequestRepository;
 import opensource.DreamingLibrary.group.repository.GroupRepository;
 import opensource.DreamingLibrary.group.repository.GroupUserRepository;
 import opensource.DreamingLibrary.user.entity.User;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GroupUserService {
 
     private final GroupUserRepository groupUserRepository;
+    private final GroupJoinRequestRepository groupJoinRequestRepository;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
 
@@ -37,7 +39,7 @@ public class GroupUserService {
 
     @Transactional(readOnly = true)
     public boolean isUserInGroup(Long groupId, Long userId) {
-        return groupUserRepository.existsByGroupIdAndUserId(groupId, userId);
+        return groupUserRepository.existsByGroupGroupIdAndUserId(groupId, userId);
     }
 
     @Transactional
@@ -68,18 +70,18 @@ public class GroupUserService {
 
     @Transactional
     public void removeMember(Long groupId, Long userId) {
-        GroupUser groupUser = groupUserRepository.findByGroupIdAndUserId(groupId, userId)
+        GroupUser groupUser = groupUserRepository.findByGroupGroupIdAndUserId(groupId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("멤버를 찾을 수 없습니다."));
         groupUserRepository.delete(groupUser);
     }
 
     @Transactional(readOnly = true)
     public List<GroupUser> listMembers(Long groupId) {
-        return groupUserRepository.findAllByGroupId(groupId);
+        return groupUserRepository.findAllByGroupGroupId(groupId);
     }
 
     @Transactional(readOnly = true)
     public List<GroupJoinRequest> listJoinRequests(Long groupId) {
-        return groupJoinRequestRepository.findAllByGroupId(groupId);
+        return groupJoinRequestRepository.findAllByGroupGroupId(groupId);
     }
 }

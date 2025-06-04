@@ -9,8 +9,6 @@ public class GroupMapper {
     public static Group from(GroupCreateRequest request) {
         return Group.builder()
                 .groupName(request.groupName())
-                .createdTime(request.createdTime())
-                .updatedTime(request.updatedTime())
                 .build();
     }
 

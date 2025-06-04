@@ -27,10 +27,7 @@ public class GroupService {
     // CREATE 예시
     public GroupResponse createGroup(GroupCreateRequest requestDto) {
         Group group = Group.builder()
-                .groupName(requestDto.groupName())
-                .createdTime(requestDto.createdTime() != null ? requestDto.createdTime() : LocalDateTime.now())
-                .updatedTime(requestDto.updatedTime() != null ? requestDto.updatedTime() : LocalDateTime.now())
-                .build();
+                .groupName(requestDto.groupName()).build();
 
         Group saved = groupRepository.save(group);
         return toResponse(saved);
@@ -85,8 +82,6 @@ public class GroupService {
         return GroupResponse.builder()
                 .groupId(group.getGroupId())
                 .groupName(group.getGroupName())
-                .createdTime(group.getCreatedTime())
-                .updatedTime(group.getUpdatedTime())
                 .build();
     }
 }
