@@ -32,7 +32,7 @@ public class UserController {
         return ResponseEntity.ok("비밀번호 변경 완료");
     }
     @GetMapping("")
-    @Operation(summary = "회원 비밀번호")
+    @Operation(summary = "회원 정보")
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.ok(userService.getUserInfo(customUserDetails.getUsername()));
     }
