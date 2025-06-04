@@ -4,10 +4,11 @@ package opensource.DreamingLibrary.group.service;
 import lombok.RequiredArgsConstructor;
 import opensource.DreamingLibrary.group.dto.request.GroupCreateRequest;
 import opensource.DreamingLibrary.group.dto.response.GroupResponse;
+import opensource.DreamingLibrary.group.dto.response.GroupStatusResponse;
 import opensource.DreamingLibrary.group.entity.Group;
-import opensource.DreamingLibrary.group.entity.GroupJoinRequest.RequestStatus;
+import opensource.DreamingLibrary.group.entity.GroupUser;
 import opensource.DreamingLibrary.group.repository.GroupRepository;
-import opensource.DreamingLibrary.group.repository.GroupJoinRequestRepository;
+import opensource.DreamingLibrary.group.repository.GroupUserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ import java.util.Optional;
 public class GroupService {
 
     private final GroupRepository groupRepository;
-    private final GroupJoinRequestRepository groupJoinRequestRepository;
+    private final GroupUserRepository groupUserRepository;
 
     // CREATE 예시
     public GroupResponse createGroup(GroupCreateRequest requestDto) {
@@ -29,7 +30,7 @@ public class GroupService {
                 .groupName(requestDto.getGroupName()).build();
 
         Group saved = groupRepository.save(group);
-        return toResponse(saved);
+        return GroupResponse.of(saved.getGroupId(), saved.getGroupName());
     }
 
     // READ 예시
@@ -48,7 +49,7 @@ public class GroupService {
         group.setGroupName(request.getName());
         groupRepository.save(group);
 
-        return new GroupResponse(group);
+        return GroupResponse.of(group);
     }
 
     @Transactional
@@ -62,25 +63,26 @@ public class GroupService {
     @Transactional(readOnly = true)
     public List<GroupResponse> listGroups() {
         List<Group> groups = groupRepository.findAll();
-        return groups.stream().map(GroupResponse::new).toList();
+        return groups.stream().map(GroupResponse::of).toList();
     }
 
     @Transactional(readOnly = true)
-    public List<GroupResponse> listGroupsWithStatus() {
+    public List<GroupStatusResponse> listGroupsWithStatus() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+
         String currentUsername = authentication.getName();
 
         List<Group> groups = groupRepository.findAll();
         return groups.stream().map(group -> {
-            RequestStatus status = groupJoinRequestRepository.findStatusByGroupIdAndUsername(group.getGroupId(), currentUsername);
-            return new GroupResponse(group, status);
+            GroupUser.RequestStatus status = groupUserRepository.findStatusByGroupGroupIdAndUsername(group.getGroupId(), currentUsername);
+            return GroupStatusResponse.of(group, status);
         }).toList();
     }
 
     private GroupResponse toResponse(Group group) {
-        return GroupResponse.builder()
-                .groupId(group.getGroupId())
-                .groupName(group.getGroupName())
-                .build();
+        return GroupResponse.of(group);
     }
 }

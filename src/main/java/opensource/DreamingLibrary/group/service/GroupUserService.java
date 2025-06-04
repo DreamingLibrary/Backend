@@ -3,9 +3,8 @@ package opensource.DreamingLibrary.group.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import opensource.DreamingLibrary.group.entity.Group;
-import opensource.DreamingLibrary.group.entity.GroupJoinRequest;
 import opensource.DreamingLibrary.group.entity.GroupUser;
-import opensource.DreamingLibrary.group.repository.GroupJoinRequestRepository;
+import opensource.DreamingLibrary.group.entity.GroupUser.RequestStatus;
 import opensource.DreamingLibrary.group.repository.GroupRepository;
 import opensource.DreamingLibrary.group.repository.GroupUserRepository;
 import opensource.DreamingLibrary.user.entity.User;
@@ -18,36 +17,40 @@ import org.springframework.transaction.annotation.Transactional;
 public class GroupUserService {
 
     private final GroupUserRepository groupUserRepository;
-    private final GroupJoinRequestRepository groupJoinRequestRepository;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
 
     @Transactional
-    public void requestJoinGroup(Long groupId, Long userId) {
+    public void requestJoinGroup(Long groupId, String username) {
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다. ID: " + groupId));
+        User user = userRepository.findByStudentNumber(username);
+
+        boolean alreadyExists = groupUserRepository.existsByGroupGroupIdAndUserId(groupId, user.getId());
+        if (alreadyExists) {
+            throw new IllegalStateException("이미 그룹에 입장 신청이 되어 있습니다.");
+        }
 
         GroupUser groupUser = GroupUser.builder()
                 .group(group)
                 .user(user)
+                .status(GroupUser.RequestStatus.PENDING) // 기본 상태를 PENDING으로 설정
                 .build();
 
         groupUserRepository.save(groupUser);
     }
 
     @Transactional(readOnly = true)
-    public boolean isUserInGroup(Long groupId, Long userId) {
-        return groupUserRepository.existsByGroupGroupIdAndUserId(groupId, userId);
+    public boolean isUserInGroup(Long groupId, String username) {
+        User user = userRepository.findByStudentNumber(username);
+        return groupUserRepository.existsByGroupGroupIdAndUserId(groupId, user.getId());
     }
 
     @Transactional
-    public void setGroupAdmin(Long groupId, Long userId) {
+    public void setGroupAdmin(Long groupId, String username) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+        User user = userRepository.findByStudentNumber(username);
 
         group.setAdmin(user);
         groupRepository.save(group);
@@ -69,19 +72,23 @@ public class GroupUserService {
     }
 
     @Transactional
-    public void removeMember(Long groupId, Long userId) {
-        GroupUser groupUser = groupUserRepository.findByGroupGroupIdAndUserId(groupId, userId)
+    public void removeMember(Long groupId, String username) {
+        User user = userRepository.findByStudentNumber(username);
+        GroupUser groupUser = groupUserRepository.findByGroupGroupIdAndUserId(groupId, user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("멤버를 찾을 수 없습니다."));
         groupUserRepository.delete(groupUser);
     }
 
     @Transactional(readOnly = true)
-    public List<GroupUser> listMembers(Long groupId) {
-        return groupUserRepository.findAllByGroupGroupId(groupId);
+    public List<GroupUser> listMembers(Long groupId, RequestStatus status) {
+        if (status == null) {
+            return groupUserRepository.findAllByGroupGroupId(groupId);
+        }
+        return groupUserRepository.findAllByGroupGroupIdAndStatus(groupId, status);
     }
 
     @Transactional(readOnly = true)
-    public List<GroupJoinRequest> listJoinRequests(Long groupId) {
-        return groupJoinRequestRepository.findAllByGroupGroupId(groupId);
+    public List<GroupUser> listJoinRequests(Long groupId) {
+        return groupUserRepository.findAllByGroupGroupId(groupId);
     }
 }

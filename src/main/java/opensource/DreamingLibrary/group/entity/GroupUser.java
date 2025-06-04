@@ -24,4 +24,12 @@ public class GroupUser {
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private RequestStatus status;
+
+    public enum RequestStatus {
+        PENDING, APPROVED, REJECTED
+    }
 }

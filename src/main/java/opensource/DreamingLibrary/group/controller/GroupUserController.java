@@ -6,62 +6,53 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import opensource.DreamingLibrary.group.entity.GroupUser;
-import opensource.DreamingLibrary.group.entity.GroupJoinRequest;
+import opensource.DreamingLibrary.group.entity.GroupUser.RequestStatus;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/group-user")
+@RequestMapping("/api/group-user")
 @RequiredArgsConstructor
 public class GroupUserController {
 
     private final GroupUserService groupUserService;
 
     @PostMapping("/request-join")
-    public ResponseEntity<?> requestJoinGroup(@RequestParam Long groupId, @RequestParam Long userId) {
-        groupUserService.requestJoinGroup(groupId, userId);
+    public ResponseEntity<?> requestJoinGroup(@RequestParam Long groupId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        groupUserService.requestJoinGroup(groupId, currentUsername);
         return ResponseEntity.ok("그룹 입장 신청이 완료되었습니다.");
     }
 
     @GetMapping("/is-in-group")
-    public ResponseEntity<?> isUserInGroup(@RequestParam Long groupId, @RequestParam Long userId) {
-        boolean isInGroup = groupUserService.isUserInGroup(groupId, userId);
+    public ResponseEntity<?> isUserInGroup(@RequestParam Long groupId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        boolean isInGroup = groupUserService.isUserInGroup(groupId, currentUsername);
         return ResponseEntity.ok(isInGroup);
     }
 
     @PostMapping("/set-admin")
-    public ResponseEntity<?> setGroupAdmin(@RequestParam Long groupId, @RequestParam Long userId) {
-        groupUserService.setGroupAdmin(groupId, userId);
+    public ResponseEntity<?> setGroupAdmin(@RequestParam Long groupId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        groupUserService.setGroupAdmin(groupId, currentUsername);
         return ResponseEntity.ok("그룹 관리자가 성공적으로 지정되었습니다.");
     }
 
-    @DeleteMapping("/delete-group")
-    public ResponseEntity<?> deleteGroup(@RequestParam Long groupId) {
-        groupUserService.deleteGroup(groupId);
-        return ResponseEntity.ok("그룹이 삭제되었습니다.");
-    }
-
-    @PutMapping("/update-group")
-    public ResponseEntity<?> updateGroup(@RequestParam Long groupId, @RequestParam String newName) {
-        groupUserService.updateGroup(groupId, newName);
-        return ResponseEntity.ok("그룹 정보가 수정되었습니다.");
-    }
-
-    @DeleteMapping("/remove-member")
-    public ResponseEntity<?> removeMember(@RequestParam Long groupId, @RequestParam Long userId) {
-        groupUserService.removeMember(groupId, userId);
-        return ResponseEntity.ok("멤버가 그룹에서 제거되었습니다.");
-    }
-
     @GetMapping("/list-members")
-    public ResponseEntity<List<GroupUser>> listMembers(@RequestParam Long groupId) {
-        List<GroupUser> members = groupUserService.listMembers(groupId);
+    public ResponseEntity<List<GroupUser>> listMembers(@RequestParam Long groupId, @RequestParam(required = false) RequestStatus status) {
+        List<GroupUser> members = groupUserService.listMembers(groupId, status);
         return ResponseEntity.ok(members);
     }
 
     @GetMapping("/list-join-requests")
-    public ResponseEntity<List<GroupJoinRequest>> listJoinRequests(@RequestParam Long groupId) {
-        List<GroupJoinRequest> joinRequests = groupUserService.listJoinRequests(groupId);
+    public ResponseEntity<List<GroupUser>> listJoinRequests(@RequestParam Long groupId) {
+        List<GroupUser> joinRequests = groupUserService.listJoinRequests(groupId);
         return ResponseEntity.ok(joinRequests);
     }
 }
