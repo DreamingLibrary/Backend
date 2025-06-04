@@ -1,6 +1,10 @@
 package opensource.DreamingLibrary.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +26,10 @@ public class UserController {
     private final UserService userService;
     @PutMapping("/info")
     @Operation(summary = "회원정보 수정")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = UserResponse.class)
+            )})
+    })
     public ResponseEntity<?> editInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody InfoRequest request) throws BadRequestException {
         return ResponseEntity.ok(userService.updateInfo(customUserDetails.getUsername(), request));
     }
@@ -33,6 +41,10 @@ public class UserController {
     }
     @GetMapping("")
     @Operation(summary = "회원 정보")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = UserResponse.class)
+            )})
+    })
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.ok(userService.getUserInfo(customUserDetails.getUsername()));
     }
