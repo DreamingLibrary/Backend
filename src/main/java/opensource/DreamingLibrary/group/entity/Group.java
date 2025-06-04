@@ -32,7 +32,7 @@ public class Group extends TimeStamp {
     private Set<GroupUser> groupUsers;
 
     @OneToOne
-    @JoinColumn(name = "admin_id", nullable = false)
+    @JoinColumn(name = "adminId", nullable = true)
     private User admin;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)

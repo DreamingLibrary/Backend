@@ -8,7 +8,7 @@ public class GroupMapper {
     // DTO -> 엔티티 변환 (static 메서드)
     public static Group from(GroupCreateRequest request) {
         return Group.builder()
-                .groupName(request.groupName())
+                .groupName(request.getGroupName())
                 .build();
     }
 

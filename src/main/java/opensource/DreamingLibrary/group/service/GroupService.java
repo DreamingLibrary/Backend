@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +26,7 @@ public class GroupService {
     // CREATE 예시
     public GroupResponse createGroup(GroupCreateRequest requestDto) {
         Group group = Group.builder()
-                .groupName(requestDto.groupName()).build();
+                .groupName(requestDto.getGroupName()).build();
 
         Group saved = groupRepository.save(group);
         return toResponse(saved);
