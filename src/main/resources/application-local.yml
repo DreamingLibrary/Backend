@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: DreamingLibrary
+#  config:
+#    import: optional:application-secret.properties
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    show-sql: true
+
+jwt:
+  secret: bXlWZXJ5TG9uZ1NlY3JldEtleVRoYXRJczI1NkJpdHNMb25nMTIzNDU2Nzg5MA==
+  expiration: 86400000
+
+sentry:
+  enabled: false
+  dsn: ""
+  environment: local
