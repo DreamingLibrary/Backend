@@ -42,6 +42,7 @@ public class BookService {
         Book newBook = BookMapper.from(request, group);
         newBook = bookRepository.save(newBook);
 
+
        return ResponseService.getSingleResult(newBook.getBookId());
     }
 
