@@ -12,6 +12,8 @@ import opensource.DreamingLibrary.rent.dto.request.RentCreateRequest;
 import opensource.DreamingLibrary.rent.dto.response.RentResponse;
 import opensource.DreamingLibrary.rent.dto.response.RentSummaryResponse;
 import opensource.DreamingLibrary.rent.service.RentService;
+import opensource.DreamingLibrary.user.service.CustomUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,8 +29,11 @@ public class RentController {
      */
     @PostMapping
     @Operation(summary = "대여하기")
-    public SuccessResponse<SingleResult<Long>> createRent(@Valid @RequestBody RentCreateRequest request) {
-        SingleResult<Long> result = rentService.createRent(request);
+    public SuccessResponse<SingleResult<Long>> createRent(
+            @Valid @RequestBody RentCreateRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        SingleResult<Long> result = rentService.createRent(request, userDetails.getId());
         return SuccessResponse.ok(result);
     }
 
@@ -43,20 +48,16 @@ public class RentController {
     }
 
     /**
-     * 속한 그룹 속 유저가 빌린 렌트 총 조회
+     * 현재 로그인한 사용자의 모든 대출 정보 조회
      */
-
-    @GetMapping("/search")
-    @Operation(summary = "유저 + 그룹 기반 대여 목록 조회")
-    public SuccessResponse<ListResult<RentSummaryResponse>> getAllRentsByUserAndGroup(
-            @RequestParam("userId") Long userId,
-            @RequestParam("groupId") Long groupId
+    @GetMapping("/my")
+    @Operation(summary = "현재 로그인한 사용자의 모든 대출 정보 조회")
+    public SuccessResponse<ListResult<RentSummaryResponse>> getMyRents(
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        ListResult<RentSummaryResponse> result = rentService.getAllRentsByUserAndGroup(userId, groupId);
-
+        ListResult<RentSummaryResponse> result = rentService.getMyRents(userDetails.getId());
         return SuccessResponse.ok(result);
     }
-
 
     /**
      * 책 반납 (해당 rent record를 삭제)

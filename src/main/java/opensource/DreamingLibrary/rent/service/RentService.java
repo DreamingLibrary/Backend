@@ -9,8 +9,6 @@ import opensource.DreamingLibrary.global.dto.response.result.SingleResult;
 import opensource.DreamingLibrary.global.exception.CustomException;
 import opensource.DreamingLibrary.global.exception.ErrorCode;
 import opensource.DreamingLibrary.global.service.ResponseService;
-import opensource.DreamingLibrary.group.entity.Group;
-import opensource.DreamingLibrary.group.repository.GroupRepository;
 import opensource.DreamingLibrary.rent.dto.request.RentCreateRequest;
 import opensource.DreamingLibrary.rent.dto.response.RentResponse;
 import opensource.DreamingLibrary.rent.dto.response.RentSummaryResponse;
@@ -30,20 +28,16 @@ public class RentService {
 
     private final RentRepository rentRepository;
     private final UserRepository userRepository;
-    private final GroupRepository groupRepository;
     private final BookRepository bookRepository;
 
     // CREATE
-    public SingleResult<Long> createRent(RentCreateRequest requestDto) {
-
-        User user = userRepository.findById(requestDto.userId())
+    public SingleResult<Long> createRent(RentCreateRequest requestDto, Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
-        Group group = groupRepository.findById(requestDto.groupId())
-                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_EXIST));
         Book book = bookRepository.findById(requestDto.bookId())
                 .orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_EXIST));
 
-        Rent rent = RentMapper.from(requestDto, user, group, book);
+        Rent rent = RentMapper.from(requestDto, user, book);
 
         Rent saved = rentRepository.save(rent);
 
@@ -63,20 +57,23 @@ public class RentService {
         return ResponseService.getSingleResult(RentResponse.of(rent));
     }
 
-
-    /*
-    * 특정 그룹의 모든 대여 읽기
+    /**
+     * 현재 로그인한 사용자의 모든 대출 정보 조회
      */
-    public ListResult<RentSummaryResponse> getAllRentsByUserAndGroup(Long userId, Long groupId) {
-        List<Rent> rents = rentRepository.findAllByUser_IdAndGroup_GroupId(userId, groupId);
+    public ListResult<RentSummaryResponse> getMyRents(Long userId) {
+        // 사용자 존재 여부만 확인
+        if (!userRepository.existsById(userId)) {
+            throw new CustomException(ErrorCode.USER_NOT_EXIST);
+        }
 
+        // 사용자의 모든 대출 정보 조회
+        List<Rent> rents = rentRepository.findAllByUser_Id(userId);
         List<RentSummaryResponse> rentResponseList = rents.stream()
                 .map(RentSummaryResponse::of)
                 .toList();
 
         return ResponseService.getListResult(rentResponseList);
     }
-
 
     /**
      * 책 반납

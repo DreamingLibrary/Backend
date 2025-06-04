@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import opensource.DreamingLibrary.book.entity.Book;
 import opensource.DreamingLibrary.global.entity.TimeStamp;
-import opensource.DreamingLibrary.group.entity.Group;
 import opensource.DreamingLibrary.user.entity.User;
 
 import java.time.LocalDateTime;
@@ -23,10 +22,6 @@ public class Rent extends TimeStamp {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "groupId", nullable = false)
-    private Group group;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bookId", nullable = false)
@@ -52,7 +47,6 @@ public class Rent extends TimeStamp {
     public Rent(
             Long rentId,
             User user,
-            Group group,
             Book book,
             Integer rentalPeriod,
             LocalDateTime returnAt,
@@ -60,7 +54,6 @@ public class Rent extends TimeStamp {
     ) {
         this.rentId = rentId;
         this.user = user;
-        this.group = group;
         this.book = book;
         this.rentalPeriod = rentalPeriod;
         this.returnAt = returnAt;
