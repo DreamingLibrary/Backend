@@ -72,12 +72,10 @@ public class GroupService {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
-
-        String currentUsername = authentication.getName();
-
         List<Group> groups = groupRepository.findAll();
+        String currentUsername = authentication.getName();
         return groups.stream().map(group -> {
-            GroupUser.RequestStatus status = groupUserRepository.findStatusByGroupGroupIdAndUsername(group.getGroupId(), currentUsername);
+            GroupUser.RequestStatus status = groupUserRepository.findStatusByGroupGroupIdAndStudentNumber(group.getGroupId(), currentUsername);
             return GroupStatusResponse.of(group, status);
         }).toList();
     }

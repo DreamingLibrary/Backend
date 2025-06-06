@@ -19,9 +19,11 @@ public interface GroupUserRepository extends JpaRepository<GroupUser, Long> {
 
     Optional<GroupUser> findByGroupGroupIdAndUserId(Long groupId, Long userId);
 
-    @Query("SELECT u.status FROM GroupUser u WHERE u.group.groupId = :groupId AND u.user.name = :username")
-    GroupUser.RequestStatus findStatusByGroupIdAndUsername(@Param("groupId") Long groupId, @Param("username") String username);
+    Optional<GroupUser> findByGroupGroupIdAndUserStudentNumber(Long groupId, String studentNumber);
 
-    @Query("SELECT u.status FROM GroupUser u WHERE u.group.groupId = :groupId AND u.user.name = :username")
-    GroupUser.RequestStatus findStatusByGroupGroupIdAndUsername(@Param("groupId") Long groupId, @Param("username") String username);
+    @Query("SELECT u.status FROM GroupUser u WHERE u.group.groupId = :groupId AND u.user.studentNumber = :studentNumber")
+    GroupUser.RequestStatus findStatusByGroupIdAndStudentNumber(@Param("groupId") Long groupId, @Param("studentNumber") String studentNumber);
+
+    @Query("SELECT u.status FROM GroupUser u WHERE u.group.groupId = :groupId AND u.user.studentNumber = :studentNumber")
+    GroupUser.RequestStatus findStatusByGroupGroupIdAndStudentNumber(@Param("groupId") Long groupId, @Param("studentNumber") String studentNumber);
 }

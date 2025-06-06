@@ -21,7 +21,17 @@ public class GroupUserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void requestJoinGroup(Long groupId, String username) {
+    public void setGroupAdmin(Long groupId, String username) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
+        User user = userRepository.findByStudentNumber(username);
+        
+        group.setAdmin(user);
+        groupRepository.save(group);
+    }
+    
+    @Transactional
+    public GroupUser requestJoinGroup(Long groupId, String username) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다. ID: " + groupId));
         User user = userRepository.findByStudentNumber(username);
@@ -37,7 +47,7 @@ public class GroupUserService {
                 .status(GroupUser.RequestStatus.PENDING) // 기본 상태를 PENDING으로 설정
                 .build();
 
-        groupUserRepository.save(groupUser);
+        return groupUserRepository.save(groupUser);
     }
 
     @Transactional(readOnly = true)
@@ -46,15 +56,6 @@ public class GroupUserService {
         return groupUserRepository.existsByGroupGroupIdAndUserId(groupId, user.getId());
     }
 
-    @Transactional
-    public void setGroupAdmin(Long groupId, String username) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
-        User user = userRepository.findByStudentNumber(username);
-
-        group.setAdmin(user);
-        groupRepository.save(group);
-    }
 
     @Transactional
     public void deleteGroup(Long groupId) {
@@ -88,7 +89,42 @@ public class GroupUserService {
     }
 
     @Transactional(readOnly = true)
-    public List<GroupUser> listJoinRequests(Long groupId) {
-        return groupUserRepository.findAllByGroupGroupId(groupId);
+    public List<GroupUser> listJoinRequests(Long groupId, GroupUser.RequestStatus status) {
+        if (status == null) {
+            return groupUserRepository.findAllByGroupGroupId(groupId);
+        }
+        return groupUserRepository.findAllByGroupGroupIdAndStatus(groupId, status);
     }
+
+    @Transactional(readOnly = true)
+    public GroupUser.RequestStatus getUserGroupStatus(Long groupId, String studentNumber) {
+        GroupUser groupUser = groupUserRepository.findByGroupGroupIdAndUserStudentNumber(groupId, studentNumber)
+                .orElseThrow(() -> new IllegalArgumentException("그룹 또는 유저를 찾을 수 없습니다."));
+        return groupUser.getStatus();
+    }
+
+    @Transactional(readOnly = true)
+    public List<GroupUser> listApprovedMembers(Long groupId) {
+        return groupUserRepository.findAllByGroupGroupIdAndStatus(groupId, GroupUser.RequestStatus.APPROVED);
+    }
+
+    public void checkIfAdmin(Long groupId, String username) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다. ID: " + groupId));
+        if (group.getAdmin() == null) {
+            throw new IllegalStateException("그룹에 관리자가 설정되어 있지 않습니다.");
+        }
+        if (!group.getAdmin().getStudentNumber().equals(username)) {
+            throw new IllegalStateException("관리자만 가능합니다.");
+        }
+    }
+
+    public GroupUser.RequestStatus updateJoinRequestStatus(Long groupId, Long userId, GroupUser.RequestStatus status) {
+        GroupUser groupUser = groupUserRepository.findByGroupGroupIdAndUserId(groupId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("입장 신청을 찾을 수 없습니다."));
+        groupUser.setStatus(status);
+        groupUserRepository.save(groupUser);
+        return groupUser.getStatus();
+    }
+
 }
