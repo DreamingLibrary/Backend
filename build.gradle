@@ -54,6 +54,9 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+
+	// sentry
+    implementation 'io.sentry:sentry-spring-boot-starter:7.14.0'
 }
 
 sentry {
