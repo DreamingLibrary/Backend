@@ -46,6 +46,30 @@ jobs:
       - name: grant execute permission for gradlew
         run: chmod +x gradlew
 
+      # 🚀 배포 시작 알림
+      - name: Discord - Deployment Started
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          START_TIME=$(date)
+          
+          curl -H "Content-Type: application/json" \
+              -d "{
+                \"embeds\": [{
+                  \"title\": \"🚀 배포 시작\",
+                  \"color\": 3447003,
+                  \"fields\": [
+                    {\"name\": \"👤 배포자\", \"value\": \"${{ github.actor }}\", \"inline\": true},
+                    {\"name\": \"🌿 브랜치\", \"value\": \"${{ github.ref_name }}\", \"inline\": true},
+                    {\"name\": \"📝 커밋\", \"value\": \"[\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})\", \"inline\": true},
+                    {\"name\": \"⏰ 시작 시간\", \"value\": \"${START_TIME}\", \"inline\": false}
+                  ],
+                  \"timestamp\": \"${TIMESTAMP}\"
+                }]
+              }" \
+                $DISCORD_WEBHOOK_URL
+
       - name: Build with Gradle Wrapper
         run: ./gradlew build -x test
         env:
@@ -81,6 +105,56 @@ jobs:
               -e SENTRY_DSN="${{ secrets.SENTRY_DSN }}" \
               -e SPRING_PROFILES_ACTIVE="prod" \
               ${{ secrets.DOCKER_USERNAME }}/dreaming_library
+
+      # ✅ 배포 성공 알림
+      - name: Discord - Deployment Success
+        if: success()
+        run: |
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          COMPLETE_TIME=$(date)
+          
+          curl -H "Content-Type: application/json" \
+              -d "{
+                \"embeds\": [{
+                  \"title\": \"✅ 배포 성공\",
+                  \"color\": 65280,
+                  \"fields\": [
+                    {\"name\": \"👤 배포자\", \"value\": \"${{ github.actor }}\", \"inline\": true},
+                    {\"name\": \"🌿 브랜치\", \"value\": \"${{ github.ref_name }}\", \"inline\": true},
+                    {\"name\": \"📝 커밋\", \"value\": \"[\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})\", \"inline\": true},
+                    {\"name\": \"⏰ 완료 시간\", \"value\": \"${COMPLETE_TIME}\", \"inline\": false},
+                    {\"name\": \"🔗 서비스\", \"value\": \"[바로가기](http://your-server-url:7000)\", \"inline\": false}
+                  ],
+                  \"timestamp\": \"${TIMESTAMP}\"
+                }]
+              }" \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      # ❌ 배포 실패 알림
+      - name: Discord - Deployment Failed
+        if: failure()
+        run: |
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          FAIL_TIME=$(date)
+          
+          curl -H "Content-Type: application/json" \
+              -d "{
+                \"embeds\": [{
+                  \"title\": \"❌ 배포 실패\",
+                  \"color\": 16711680,
+                  \"fields\": [
+                    {\"name\": \"👤 배포자\", \"value\": \"${{ github.actor }}\", \"inline\": true},
+                    {\"name\": \"🌿 브랜치\", \"value\": \"${{ github.ref_name }}\", \"inline\": true},
+                    {\"name\": \"📝 커밋\", \"value\": \"[\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})\", \"inline\": true},
+                    {\"name\": \"⏰ 실패 시간\", \"value\": \"${FAIL_TIME}\", \"inline\": false},
+                    {\"name\": \"🔍 로그\", \"value\": \"[${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\", \"inline\": false}
+                  ],
+                  \"timestamp\": \"${TIMESTAMP}\"
+                }]
+              }" \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+  
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
