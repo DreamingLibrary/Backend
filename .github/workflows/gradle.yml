@@ -52,7 +52,6 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          START_TIME=$(date)
           
           curl -H "Content-Type: application/json" \
               -d "{
@@ -62,8 +61,7 @@ jobs:
                   \"fields\": [
                     {\"name\": \"👤 배포자\", \"value\": \"${{ github.actor }}\", \"inline\": true},
                     {\"name\": \"🌿 브랜치\", \"value\": \"${{ github.ref_name }}\", \"inline\": true},
-                    {\"name\": \"📝 커밋\", \"value\": \"[\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})\", \"inline\": true},
-                    {\"name\": \"⏰ 시작 시간\", \"value\": \"${START_TIME}\", \"inline\": false}
+                    {\"name\": \"📝 커밋\", \"value\": \"[\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})\", \"inline\": true}
                   ],
                   \"timestamp\": \"${TIMESTAMP}\"
                 }]
@@ -111,7 +109,6 @@ jobs:
         if: success()
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          COMPLETE_TIME=$(date)
           
           curl -H "Content-Type: application/json" \
               -d "{
@@ -121,9 +118,7 @@ jobs:
                   \"fields\": [
                     {\"name\": \"👤 배포자\", \"value\": \"${{ github.actor }}\", \"inline\": true},
                     {\"name\": \"🌿 브랜치\", \"value\": \"${{ github.ref_name }}\", \"inline\": true},
-                    {\"name\": \"📝 커밋\", \"value\": \"[\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})\", \"inline\": true},
-                    {\"name\": \"⏰ 완료 시간\", \"value\": \"${COMPLETE_TIME}\", \"inline\": false},
-                    {\"name\": \"🔗 서비스\", \"value\": \"[바로가기](http://your-server-url:7000)\", \"inline\": false}
+                    {\"name\": \"📝 커밋\", \"value\": \"[\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})\", \"inline\": true}
                   ],
                   \"timestamp\": \"${TIMESTAMP}\"
                 }]
@@ -135,7 +130,6 @@ jobs:
         if: failure()
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          FAIL_TIME=$(date)
           
           curl -H "Content-Type: application/json" \
               -d "{
@@ -146,7 +140,6 @@ jobs:
                     {\"name\": \"👤 배포자\", \"value\": \"${{ github.actor }}\", \"inline\": true},
                     {\"name\": \"🌿 브랜치\", \"value\": \"${{ github.ref_name }}\", \"inline\": true},
                     {\"name\": \"📝 커밋\", \"value\": \"[\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})\", \"inline\": true},
-                    {\"name\": \"⏰ 실패 시간\", \"value\": \"${FAIL_TIME}\", \"inline\": false},
                     {\"name\": \"🔍 로그\", \"value\": \"[${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\", \"inline\": false}
                   ],
                   \"timestamp\": \"${TIMESTAMP}\"
