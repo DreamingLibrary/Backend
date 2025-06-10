@@ -14,6 +14,10 @@ public record GroupJoinRequestResponse(
         String studentNumber,
 
         @NotNull
+        @Schema(description = "유저 이름", example = "홍길동")
+        String name,
+
+        @NotNull
         @Schema(description = "현재 상태", example = "PENDING")
         GroupUser.RequestStatus status
 ) {
@@ -21,6 +25,7 @@ public record GroupJoinRequestResponse(
         return new GroupJoinRequestResponse(
                 groupUser.getUser().getId(),
                 groupUser.getUser().getStudentNumber(),
+                groupUser.getUser().getName(),
                 groupUser.getStatus()
         );
     }

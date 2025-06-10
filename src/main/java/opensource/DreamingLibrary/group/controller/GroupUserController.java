@@ -88,7 +88,7 @@ public class GroupUserController {
             getCurrentUsername();
             List<GroupUser> approvedMembers = groupUserService.listApprovedMembers(groupId);
             List<GroupMemberResponse> response = approvedMembers.stream()
-                    .map(member -> GroupMemberResponse.of(member.getUser().getId(), member.getUser().getStudentNumber()))
+                    .map(member -> GroupMemberResponse.of(member.getUser().getId(), member.getUser().getStudentNumber(), member.getUser().getName()))
                     .toList();
             return ResponseEntity.ok(SuccessResponse.ok(response));
         } catch (IllegalStateException e) {

@@ -10,9 +10,13 @@ public record GroupMemberResponse(
 
         @NotNull
         @Schema(description = "유저 학번", example = "20201234")
-        String studentNumber
+        String studentNumber,
+
+        @NotNull
+        @Schema(description = "유저 이름", example = "홍길동")
+        String name
 ) {
-    public static GroupMemberResponse of(Long userId, String studentNumber) {
-        return new GroupMemberResponse(userId, studentNumber);
+    public static GroupMemberResponse of(Long userId, String studentNumber, String name) {
+        return new GroupMemberResponse(userId, studentNumber, name);
     }
 }
