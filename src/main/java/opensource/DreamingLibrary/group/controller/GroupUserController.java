@@ -37,10 +37,10 @@ public class GroupUserController {
     }
 
     @PostMapping("/set-admin")
-    public ResponseEntity<?> setGroupAdmin(@RequestParam Long groupId) {
+    public ResponseEntity<?> setGroupAdmin(@RequestParam Long groupId, @RequestParam Long userId) {
         try {
             String currentUsername = getCurrentUsername();
-            groupUserService.setGroupAdmin(groupId, currentUsername);
+            groupUserService.setGroupAdmin(groupId, userId);
             return ResponseEntity.ok(SuccessResponse.ok("그룹 관리자가 성공적으로 지정되었습니다."));
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

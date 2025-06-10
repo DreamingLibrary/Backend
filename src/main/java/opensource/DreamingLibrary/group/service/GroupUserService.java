@@ -21,11 +21,12 @@ public class GroupUserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void setGroupAdmin(Long groupId, String username) {
+    public void setGroupAdmin(Long groupId, Long userId) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
-        User user = userRepository.findByStudentNumber(username);
-        
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
         group.setAdmin(user);
         groupRepository.save(group);
     }
