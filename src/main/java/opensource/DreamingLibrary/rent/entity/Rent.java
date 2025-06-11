@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "rent")
 @Getter
+@Setter
 @NoArgsConstructor
 public class Rent extends TimeStamp {
 

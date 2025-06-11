@@ -86,4 +86,10 @@ public class RentService {
         return ResponseService.getSingleResult("반납 완료");
     }
 
+    public RentSummaryResponse extendBook(Long rentId, Long userId) {
+        Rent rent = rentRepository.findById(rentId).orElseThrow(() -> new CustomException(ErrorCode.RENT_NOT_EXIST));
+        rent.setReturnAt(rent.getReturnAt().plusDays(7));
+        return RentSummaryResponse.of(rent);
+    }
+
 }

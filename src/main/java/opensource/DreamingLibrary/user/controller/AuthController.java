@@ -33,8 +33,8 @@ public class AuthController {
             )})
     })
     public ResponseEntity<?> register(HttpServletResponse response, @Valid @RequestBody UserCreateRequest request) throws BadRequestException {
-        userService.register(response, request);
-        return ResponseEntity.ok("회원가입성공");
+
+        return ResponseEntity.ok(userService.register(response, request));
     }
     @GetMapping("/")
     public ResponseEntity<?> home(){

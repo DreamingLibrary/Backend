@@ -61,8 +61,16 @@ public class RentController {
     /**
      * 책 반납 (해당 rent record를 삭제)
      */
+    @DeleteMapping("")
+    @Operation(summary = "책 반납")
     public SuccessResponse<SingleResult<String>> returnRent(@PathVariable("rentId") Long rentId){
         SingleResult<String> result = rentService.returnRent(rentId);
         return SuccessResponse.ok(result);
+    }
+
+    @PostMapping("/extend/{rentId}")
+    @Operation
+    public RentSummaryResponse extentRentById(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable("rentId") Long rentId) {
+        return rentService.extendBook(rentId, userDetails.getId());
     }
 }
