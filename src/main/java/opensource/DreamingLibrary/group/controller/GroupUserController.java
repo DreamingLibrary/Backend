@@ -24,6 +24,10 @@ import java.util.List;
 
 import java.util.List;
 
+
+// ci cd 용 수정
+
+
 @RestController
 @RequestMapping("/api/group-user")
 @RequiredArgsConstructor
