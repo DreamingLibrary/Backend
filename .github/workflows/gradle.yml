@@ -99,9 +99,7 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/dreaming_library
             docker stop dreaming_library || true
             docker rm dreaming_library || true
-            docker run -d --name dreaming_library -p 7000:8080 \
-              -e SENTRY_DSN="${{ secrets.SENTRY_DSN }}" \
-              ${{ secrets.DOCKER_USERNAME }}/dreaming_library
+            docker run -d --name dreaming_library -p 7000:8080 ${{ secrets.DOCKER_USERNAME }}/dreaming_library
 
       # ✅ 배포 성공 알림
       - name: Discord - Deployment Success
