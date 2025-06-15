@@ -15,11 +15,13 @@ import opensource.DreamingLibrary.global.service.ResponseService;
 import opensource.DreamingLibrary.group.entity.Group;
 import opensource.DreamingLibrary.group.repository.GroupRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BookService {
 

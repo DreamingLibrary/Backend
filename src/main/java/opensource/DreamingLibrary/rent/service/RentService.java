@@ -18,12 +18,14 @@ import opensource.DreamingLibrary.rent.repository.RentRepository;
 import opensource.DreamingLibrary.user.entity.User;
 import opensource.DreamingLibrary.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RentService {
 
     private final RentRepository rentRepository;
