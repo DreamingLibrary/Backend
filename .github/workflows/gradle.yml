@@ -101,7 +101,6 @@ jobs:
             docker rm dreaming_library || true
             docker run -d --name dreaming_library -p 7000:8080 \
               -e SENTRY_DSN="${{ secrets.SENTRY_DSN }}" \
-              -e SPRING_PROFILES_ACTIVE="prod" \
               ${{ secrets.DOCKER_USERNAME }}/dreaming_library
 
       # ✅ 배포 성공 알림
